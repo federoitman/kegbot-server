@@ -48,13 +48,13 @@ class SlackPlugin(plugin.Plugin):
         settings = self.get_site_settings()
         url = self.generate_slack_msg()
         event_dict = protolib.ToDict(event, full=True)
-	msg = self.generate_slack_msg(settings, event_dict)
-	if 'image' in event_dict:
+    	msg = self.generate_slack_msg(settings, event_dict)
+    	if 'image' in event_dict:
             image_file = self.get_image_file(event_dict['image']['url'])
-
-        if post:
-            with SuppressTaskErrors(self.logger):
-                tasks.slack_post.delay(url, post)
+        else:
+            image_file = ''
+        with SuppressTaskErrors(self.logger):
+            tasks.slack_post.delay(self.slack_config(), msg, image_file)
 
     ### -specific methods
     def get_image_file(self, image_url):
@@ -101,7 +101,7 @@ class SlackPlugin(plugin.Plugin):
         settings   = self.get_site_settings()
         token      = settings.get('slack_token', '').strip()
         team       = settings.get('slack_team', '').strip()
-        channel    = settings.get('slack_channel', '').strip()
+        channel    = settings.get('slack_channel_name', '').strip()
         channel_id = settings.get('slack_channel_id', '').strip()
         botname    = settings.get('slack_botname', '').strip()
 

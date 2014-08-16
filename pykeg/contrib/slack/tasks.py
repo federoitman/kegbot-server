@@ -23,40 +23,22 @@ from pykeg.plugin import util
 from pykeg.core.util import get_version
 from kegbot.util import kbjson
 
-import requests
+from slacker import Slacker
 
 logger = util.get_logger(__name__)
 
 
 @app.task(name='slack_post', expires=180)
-def slack_post(url, event_dict, slack_conf, msg):
+def slack_post(slack_conf, msg, image_file=''):
     """Posts an event to slack.
 
-    The request body is a JSON dictionary of:
-      * type: webhook message type (currently always 'event')
-      * event_dict: webhook data (the event payload)
-
-    Event payloads are in the same format as the /api/events/ endpoint.
     """
-    logger.info('Posting to slack: url=%s event=%s' % (url, event_dict))
+    logger.info('Posting to slack: msg=%s image_file=%s' % (msg, image_file))
 
-    hook_dict = {
-            'type': 'event',
-            'payload': {
-                "channel": slack_conf.channel,
-                "username": event_dict.user.username,
-                "text": msg,
-                "icon_url": "https://avatars3.githubusercontent.com/u/395880"
-                }
-            }
+    slack = Slacker(slack_conf['token'])
+    if image_file:
+        slack.files.upload(image_file, channels=slack_conf['channel_id'], initial_comment=msg)
+    else:
+        slack.chat.post_message(slack_conf['channel'], msg, slack_conf['botname'])
 
-    headers = {
-        'content-type': 'application/json',
-        'user-agent': 'Kegbot/%s' % get_version(),
-    }
 
-    try:
-        return requests.post(url, data=kbjson.dumps(hook_dict), headers=headers)
-    except requests.exceptions.RequestException, e:
-        logger.warning('Error posting hook: %s' % e)
-        return False

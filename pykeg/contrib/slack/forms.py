@@ -25,10 +25,10 @@ TEXTFIELD = forms.Textarea(attrs={'class': 'input-block-level', 'cols': 80, 'row
 
 
 class SiteSettingsForm(forms.Form):
-    slack_token      = forms.CharField(required=True, widget=TEXTFIELD)
-    slack_team       = forms.CharField(required=True, widget=TEXTFIELD)
-    slack_channeli   = forms.CharField(required=True, widget=TEXTFIELD)
-    slack_channel_id = forms.CharField(required=True, widget=TEXTFIELD)
-    slack_botname    = forms.CharField(required=True, widget=TEXTFIELD)
-    drink_poured_msg = forms.CharField(required=False, widget=TEXTAREA,
+    slack_token        = forms.CharField(required=True, widget=TEXTFIELD)
+    slack_team         = forms.CharField(required=True, widget=TEXTFIELD)
+    slack_channel_name = forms.CharField(required=True, widget=TEXTFIELD)
+    slack_channel_id   = forms.CharField(required=True, widget=TEXTFIELD)
+    slack_botname      = forms.CharField(required=True, widget=TEXTFIELD)
+    drink_poured_msg   = forms.CharField(required=False, widget=TEXTAREA,
         help_text='Message to send for new pour')
