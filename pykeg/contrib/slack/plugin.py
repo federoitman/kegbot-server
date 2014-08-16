@@ -63,8 +63,8 @@ class SlackPlugin(plugin.Plugin):
 
     def generate_slack_msg(self, settings, event_dict):
         event = event_dict['kind']
-	msg_template = settings.get(event+'_msg', '')
-	if msg_template == '':
+    	msg_template = settings.get(event+'_msg', '')
+    	if msg_template == '':
             return
         msg = self.replace_variables(msg_template, event_dict)
 
