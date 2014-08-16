@@ -28,7 +28,7 @@ from slacker import Slacker
 logger = util.get_logger(__name__)
 
 
-@app.task(name='slack_post', expires=180)
+#@app.task(name='slack_post', expires=180)
 def slack_post(slack_conf, msg, image_file=''):
     """Posts an event to slack.
 

@@ -48,17 +48,22 @@ class SlackPlugin(plugin.Plugin):
         settings = self.get_site_settings()
         event_dict = protolib.ToDict(event, full=True)
     	msg = self.generate_slack_msg(settings, event_dict)
-    	if 'image' in event_dict:
-            image_file = self.get_image_file(event_dict['image']['url'])
+        #import ipdb; ipdb.set_trace()
+        try:
+            url = event_dict['drink']['images'][0]['original_url']
+        except:
+            url = None 
+    	if url:
+            image_file = '/home/federico/kegbot-data/'+url.split('/',3)[3]
         else:
             image_file = ''
         with SuppressTaskErrors(self.logger):
-            tasks.slack_post.delay(self.slack_config(), msg, image_file)
+            tasks.slack_post(self.slack_config(), msg, image_file)
 
     ### -specific methods
     def get_image_file(self, image_url):
         # Here we would look for the image path on disk
-        pass
+        return image_url
 
     def generate_slack_msg(self, settings, event_dict):
         event = event_dict['kind']
@@ -67,7 +72,7 @@ class SlackPlugin(plugin.Plugin):
             return
         msg = self.replace_variables(msg_template, event_dict)
 
-        print msg
+        return msg
 
     def replace_variables(self, msg, event_dict):
         variables = self.get_variables(event_dict)
