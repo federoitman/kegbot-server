@@ -46,14 +46,47 @@ class SlackPlugin(plugin.Plugin):
     def handle_event(self, event):
         self.logger.info('Handling new event: %s' % event.id)
         settings = self.get_site_settings()
-        urls = settings.get('slack_urls', '').strip().split()
+        url = settings.get('slack_urls', '').strip().split()
         event_dict = protolib.ToDict(event, full=True)
-        for url in urls:
-            with SuppressTaskErrors(self.logger):
-                import ipdb; ipdb.set_trace()
-                tasks.slack_post.delay(url, event_dict)
+	msg = self.generate_slack_msg(settings, event_dict)
+	if 'image' in event_dict:
+            image_file = self.get_image_file(event_dict['image']['url'])
 
-    ### Webhook-specific methods
+        if post:
+            with SuppressTaskErrors(self.logger):
+                tasks.slack_post.delay(url, post)
+
+    ### -specific methods
+    def get_image_file(self, image_url):
+        # Here we would look for the image path on disk
+        pass
+
+    def generate_slack_msg(self, settings, event_dict):
+        event = event_dict['kind']
+	msg_template = settings.get(event+'_msg', '')
+	if msg_template == '':
+            return
+        msg = self.replace_variables(msg_template, event_dict)
+
+        print msg
+
+    def replace_variables(self, msg, event_dict):
+        variables = self.get_variables(event_dict)
+        for variable in variables:
+            if variable in msg:
+                msg = msg.replace(variable, str(variables[variable]))
+        return msg
+
+    def get_variables(self, event_dict):
+        variables = {}
+        for item in event_dict:
+            if isinstance(event_dict[item], dict):
+		elements = self.get_variables(event_dict[item])
+                for element in elements:
+                    variables[item.upper()+"."+element.upper()] = elements[element]
+            else:
+                variables[item.upper()] = event_dict[item]
+        return variables
 
     def get_site_settings_form(self):
         return self.datastore.load_form(forms.SiteSettingsForm, KEY_SITE_SETTINGS)

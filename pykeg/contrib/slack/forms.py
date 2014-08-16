@@ -26,5 +26,5 @@ TEXTAREA = forms.Textarea(attrs={'class': 'input-block-level'})
 class SiteSettingsForm(forms.Form):
     slack_urls = forms.CharField(required=False, widget=TEXTAREA,
         help_text='URLs for Slack webhook.')
-    pour_msg = forms.CharField(required=False, widget=TEXTAREA,
+    drink_poured_msg = forms.CharField(required=False, widget=TEXTAREA,
         help_text='Message to send for new pour')
