@@ -21,10 +21,14 @@
 from django import forms
 
 TEXTAREA = forms.Textarea(attrs={'class': 'input-block-level'})
+TEXTFIELD = forms.Textarea(attrs={'class': 'input-block-level', 'cols': 80, 'rows': 1})
 
 
 class SiteSettingsForm(forms.Form):
-    slack_urls = forms.CharField(required=False, widget=TEXTAREA,
-        help_text='URLs for Slack webhook.')
+    slack_token      = forms.CharField(required=True, widget=TEXTFIELD)
+    slack_team       = forms.CharField(required=True, widget=TEXTFIELD)
+    slack_channeli   = forms.CharField(required=True, widget=TEXTFIELD)
+    slack_channel_id = forms.CharField(required=True, widget=TEXTFIELD)
+    slack_botname    = forms.CharField(required=True, widget=TEXTFIELD)
     drink_poured_msg = forms.CharField(required=False, widget=TEXTAREA,
         help_text='Message to send for new pour')
