@@ -29,7 +29,7 @@ logger = util.get_logger(__name__)
 
 
 @app.task(name='slack_post', expires=180)
-def slack_post(url, event_dict):
+def slack_post(url, event_dict, slack_conf, msg):
     """Posts an event to slack.
 
     The request body is a JSON dictionary of:
@@ -41,9 +41,14 @@ def slack_post(url, event_dict):
     logger.info('Posting to slack: url=%s event=%s' % (url, event_dict))
 
     hook_dict = {
-        'type': 'event',
-        'data': event_dict,
-    }
+            'type': 'event',
+            'payload': {
+                "channel": slack_conf.channel,
+                "username": event_dict.user.username,
+                "text": msg,
+                "icon_url": "https://avatars3.githubusercontent.com/u/395880"
+                }
+            }
 
     headers = {
         'content-type': 'application/json',
