@@ -46,7 +46,6 @@ class SlackPlugin(plugin.Plugin):
     def handle_event(self, event):
         self.logger.info('Handling new event: %s' % event.id)
         settings = self.get_site_settings()
-        url = self.generate_slack_msg()
         event_dict = protolib.ToDict(event, full=True)
     	msg = self.generate_slack_msg(settings, event_dict)
     	if 'image' in event_dict:
