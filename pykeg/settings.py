@@ -172,6 +172,7 @@ KEGBOT_PLUGINS = [
     'pykeg.contrib.twitter.plugin.TwitterPlugin',
     'pykeg.contrib.untappd.plugin.UntappdPlugin',
     'pykeg.contrib.webhook.plugin.WebhookPlugin',
+    'pykeg.contrib.slack.plugin.SlackPlugin',
 ]
 
 # You probably don't want to turn this on.
